@@ -2,8 +2,8 @@
 
 <div align="center">
 <p>
-<a href="#installation">Installation</a> |
-<a href="#quick-start">Quick-Start</a> 
+<a href="#️-installation">Installation</a> |
+<a href="#-quick-start">Quick-Start</a> 
 </p>
 </div>
 
@@ -22,6 +22,12 @@ LongRefiner is an efficient plug-and-play refinement system for long-context RAG
 - 🔌 **Plug and Play**: Compatible with any LLM and retrieval system
 - 📑 **Hierarchical Document Structuring**: XML-based efficient document representation 
 - 🔄 **Adaptive Refinement**: Dynamic content selection based on query requirements
+
+## 🗺️ RoadMap
+
+- [] Release training code
+- [] Release trained modules
+
 
 ## 🛠️ Installation
 
