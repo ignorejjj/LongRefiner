@@ -25,14 +25,14 @@ LongRefiner is an efficient plug-and-play refinement system for long-context RAG
 
 ## 🗺️ RoadMap
 
-- [] Release training code
-- [] Release trained modules
+- [ ] Release training code
+- [ ] Release trained modules
 
 
 ## 🛠️ Installation
 
 ```bash
-git clone https://anonymous.4open.science/r/LongRefiner-FECD
+git clone https://github.com/ignorejjj/LongRefiner
 cd LongRefiner
 pip install -r requirements.txt
 pip install -e .
