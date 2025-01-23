@@ -4,3 +4,4 @@ rank_bm25
 tqdm
 numpy
 json_repair
+torch

@@ -15,13 +15,13 @@ from task_instruction import *
 class LongRefiner:
     def __init__(
         self,
-        base_model_path: str = "/home/u2023100837/model/qwen2.5-3B-Instruct",
-        query_analysis_module_lora_path: str = "/home/u2023100837/workspace/longcompress/cpkt/cpkt_task1_1227/checkpoint-12000",
-        doc_structuring_module_lora_path: str = "/home/u2023100837/workspace/longcompress/cpkt/cpkt_chunking_v5/checkpoint-13000",
-        global_selection_module_lora_path: str = "/home/u2023100837/workspace/longcompress/cpkt/cpkt_title_select_v2/checkpoint-8730",
-        max_model_len: int = 25000,
+        base_model_path: str = "Qwen/Qwen2.5-3B-Instruct",
+        query_analysis_module_lora_path: str = "",
+        doc_structuring_module_lora_path: str = "",
+        global_selection_module_lora_path: str = "",
         score_model_name: str = "bge-reranker-v2-m3",
-        score_model_path: str = "/home/u2023100837/model/bge-reranker-v2-m3",
+        score_model_path: str = "BAAI/bge-reranker-v2-m3",
+        max_model_len: int = 25000,
     ):
         # load refine model
         self._load_trained_model(
@@ -923,24 +923,3 @@ class LongRefiner:
 
             all_nodes.append(final_node_list[:-1])
         return all_nodes
-
-
-if __name__ == "__main__":
-    # with open('sample_data.json', 'r') as f:
-    #     data = json.load(f)
-    # question = list(data.keys())[0]
-    # document_list = list(data.values())[0]
-    # # for test
-    longrefiner = LongRefiner()
-    # longrefiner.run(question, document_list)
-
-    file_path = "/home/u2023100837/workspace/longcompress/middle_result/2wikimultihopqa_2024_12_10_14_23_doc8_task_chunking_v5_13000/intermediate_data.json"
-    with open(file_path, "r") as f:
-        test_data = json.load(f)
-    test_case = test_data[0]
-    raw_doc = test_case["output"]["doc_infor"][0]["doc"]["contents"]
-    doc_content = "\n".join(raw_doc.split("\n")[1:])
-    xml_doc = test_case["output"]["doc_infor"][0]["chunking_output"]
-
-    output = longrefiner.parse_xml_doc(doc_content, xml_doc)
-    print(output)
