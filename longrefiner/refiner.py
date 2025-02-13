@@ -526,7 +526,7 @@ class LongRefiner:
                             abs = original_doc_content.split(subsection_content)[0]
                             structured_doc["abstract"] = abs
                             break
-        # 清洗结果
+        # clean result
         if "abstract" in structured_doc:
             if structured_doc["abstract"] is None or structured_doc["abstract"] == "":
                 pass
