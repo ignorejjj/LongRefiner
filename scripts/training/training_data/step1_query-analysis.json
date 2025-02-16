@@ -1,0 +1,52 @@
+[
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "why fake credit cards aren\u2019t a thing?",
+        "output": "[Global]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "who is won the 2018 fifa world cup",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "Were was the company based to which David Vogel Uihlein, Sr was the heir ?",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "which American actress was the daughter of  Lipton",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "Are Mian Kuh, Mazandaran and Belanting located in the same country?",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "Sam Willoughby (born 15 August 1991 in Bedford Park, South Australia) is an Australian BMX cyclist also known as 'the BMX bandit', Bedford Park is a southern suburb of where, in South Australia?",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "Who became the youngest man, at age 35, to win the Nobel Peace Prize in 1964?",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "how many triple doubles did mj have in his career",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "What role does finn wolfhard play in it?",
+        "output": "[Local]"
+    },
+    {
+        "instruction": "\nYou are an assistant that performs step-by-step analysis of user queries.\n",
+        "input": "Which two countries jointly hosted the 2002 FIFA World Cup?",
+        "output": "[Local]"
+    }
+]

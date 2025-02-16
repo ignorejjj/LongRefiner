@@ -6,3 +6,4 @@ numpy
 json_repair
 torch
 tiktoken
+flashrag-dev
