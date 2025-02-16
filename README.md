@@ -49,7 +49,7 @@ pip install -e ".[torch,metrics]"
 
 ## 🚀 Quick Start
 
-You can download the pre-trained LoRA models from `model/checkpoints.zip`.
+You can download the pre-trained LoRA models from [here](https://drive.google.com/file/d/1ZCHFwCNggDtZzf_cV4tH5VPZT0mGulaY/view?usp=sharing).
 
 ```python
 import json
