@@ -12,36 +12,20 @@ class PromptTemplate:
     )
     base_user_prompt = "Question: {question}"
 
-    def __init__(self, config, system_prompt="", user_prompt="", reference_template=None, enable_chat=True):
+    def __init__(self, tokenizer, system_prompt="", user_prompt=""):
 
-        self.config = config
-        self.is_openai = config["framework"] == "openai"
-        self.max_input_len = config["generator_max_input_len"]
-        if not self.is_openai:
-            self.generator_path = config["generator_model_path"]
-            model_config = AutoConfig.from_pretrained(self.generator_path, trust_remote_code=True)
-            model_name = model_config._name_or_path.lower()
-            self.is_chat = False
-            if "chat" in model_name or "instruct" in model_name:
-                self.is_chat = True
-            self.tokenizer = AutoTokenizer.from_pretrained(self.generator_path, trust_remote_code=True)
-        else:
-            self.is_chat = True
-            self.enable_chat = True
-            try:
-                self.tokenizer = tiktoken.encoding_for_model(config["generator_model"])
-            except Exception as e:
-                print("Error: ", e)
-                warnings.warn("This model is not supported by tiktoken. Use gpt-3.5-turbo instead.")
-                self.tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo")
+        self.max_input_len = 64000
+        self.tokenizer = tokenizer
 
         if len(system_prompt) == 0 and len(user_prompt) == 0:
             system_prompt = self.base_system_prompt
             user_prompt = self.base_user_prompt
         self.system_prompt = system_prompt
         self.user_prompt = user_prompt
-        self.enable_chat = enable_chat
-        self.reference_template = reference_template
+        self.enable_chat = True
+        self.is_chat = True
+        self.is_openai = False
+        self.reference_template = None
 
         # self._check_placeholder()
 
@@ -138,56 +122,6 @@ class PromptTemplate:
             input += previous_gen
 
         return self.truncate_prompt(input)
-
-    def get_string_with_varying_examplars(
-        self,
-        question,
-        retrieval_result=None,
-        formatted_reference=None,
-        previous_gen=None,
-        examplars=[],
-        tokenizer=None,
-        max_length=2048,
-        **params,
-    ):
-        """
-        Select the maximum number of examplars that can be placed in the prompt
-        """
-
-        final_examplars = None
-        num = len(examplars)
-        while len(examplars) > 0:
-            for num in range(len(examplars), 0, -1):
-                possible_prompt = self.get_string(
-                    question=question,
-                    retrieval_result=retrieval_result,
-                    formatted_reference=formatted_reference,
-                    previous_gen=previous_gen,
-                    examplars="\n\n".join(examplars[:num]),
-                    **params,
-                )
-
-                possible_prompt_tokens = tokenizer.encode(possible_prompt)
-                if len(possible_prompt_tokens) <= max_length:
-                    final_examplars = examplars[:num]
-                    break
-            if final_examplars is None:
-                examplars = examplars[1:]
-            else:
-                break
-        if final_examplars is None:
-            final_examplars = []
-
-        final_prompt = self.get_string(
-            question=question,
-            retrieval_result=retrieval_result,
-            formatted_reference=formatted_reference,
-            previous_gen=previous_gen,
-            examplars="\n\n".join(final_examplars[:num]),
-            **params,
-        )
-
-        return final_prompt
 
     def format_reference(self, retrieval_result):
         format_reference = ""
