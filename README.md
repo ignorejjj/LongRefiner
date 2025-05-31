@@ -57,9 +57,9 @@ import json
 from longrefiner import LongRefiner
 
 # Initialize
-query_analysis_module_lora_path = "jinjiajie/LongRefiner-Query-Analysis-3B"
-doc_structuring_module_lora_path = "jinjiajie/LongRefiner-Doc-Structuring-3B"
-selection_module_lora_path = "jinjiajie/LongRefiner-Global-Selection-3B"
+query_analysis_module_lora_path = "jinjiajie/Query-Analysis-Qwen2.5-3B-Instruct"
+doc_structuring_module_lora_path = "jinjiajie/Doc-Structuring-Qwen2.5-3B-Instruct"
+selection_module_lora_path = "jinjiajie/Global-Selection-Qwen2.5-3B-Instruct"
 
 refiner = LongRefiner(
     base_model_path="Qwen/Qwen2.5-3B-Instruct",
