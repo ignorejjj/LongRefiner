@@ -50,16 +50,16 @@ pip install -e ".[torch,metrics]"
 
 ## 🚀 Quick Start
 
-You can download the pre-trained LoRA models from [here](https://drive.google.com/file/d/1ZCHFwCNggDtZzf_cV4tH5VPZT0mGulaY/view?usp=sharing).
+You can download the pre-trained LoRA models from [here](https://huggingface.co/collections/jinjiajie/longrefiner-683ac32af1dc861d4c5d00e2).
 
 ```python
 import json
 from longrefiner import LongRefiner
 
 # Initialize
-query_analysis_module_lora_path = "model/Qwen2.5-3B-Instruct-query-analysis"
-doc_structuring_module_lora_path = "model/Qwen2.5-3B-Instruct-doc-structuring"
-selection_module_lora_path = "model/Qwen2.5-3B-Instruct-global-selection"
+query_analysis_module_lora_path = "jinjiajie/LongRefiner-Query-Analysis-3B"
+doc_structuring_module_lora_path = "jinjiajie/LongRefiner-Doc-Structuring-3B"
+selection_module_lora_path = "jinjiajie/LongRefiner-Global-Selection-3B"
 
 refiner = LongRefiner(
     base_model_path="Qwen/Qwen2.5-3B-Instruct",
