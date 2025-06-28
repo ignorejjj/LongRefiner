@@ -5,15 +5,15 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 DATASET_NAME="nq"
 SPLIT="test"
 
-# set generator model
+# set generator model path
 GENERATOR_MODEL="llama3.1-8B-instruct"
 GENERATOR_MODEL_PATH="meta-llama/Llama-3.1-8B-Instruct"
 
-# set refiner model
+# set refiner model path
 BASE_REFINER_MODEL_PATH="Qwen/Qwen2.5-3B-Instruct"
-QUERY_ANALYSIS_MODULE="model/Qwen2.5-3B-Instruct-query-analysis"
-DOC_STRUCTURING_MODULE="model/Qwen2.5-3B-Instruct-doc-structuring"
-GLOBAL_SELECTION_MODULE="model/Qwen2.5-3B-Instruct-global-selection"
+QUERY_ANALYSIS_MODULE="jinjiajie/Query-Analysis-Qwen2.5-3B-Instruct"
+DOC_STRUCTURING_MODULE="jinjiajie/Doc-Structuring-Qwen2.5-3B-Instruct"
+GLOBAL_SELECTION_MODULE="jinjiajie/Global-Selection-Qwen2.5-3B-Instruct"
 SCORE_MODEL="bge-reranker-v2-m3"
 SCORE_MODEL_PATH="BAAI/bge-reranker-v2-m3"
 
