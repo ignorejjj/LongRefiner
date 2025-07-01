@@ -5,7 +5,7 @@ from longrefiner import LongRefiner
 from flashrag.config import Config
 from flashrag.evaluator import Evaluator
 from flashrag.utils import get_generator, get_dataset
-from flashrag.prompt_template import PromptTemplate
+from flashrag.prompt import PromptTemplate
 
 
 def parse_args():
