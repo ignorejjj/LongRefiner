@@ -8,8 +8,8 @@ from vllm import LLM, SamplingParams
 from vllm.lora.request import LoRARequest
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModel
 
-from prompt_template import PromptTemplate
-from task_instruction import *
+from longrefiner.prompt_template import PromptTemplate
+from longrefiner.task_instruction import *
 
 
 class LongRefiner:
@@ -47,7 +47,7 @@ class LongRefiner:
             "query_analysis": {
                 "lora_path": query_analysis_module_lora_path,
                 "lora_request": LoRARequest(
-                    name="query_analysis", id=0, lora_local_path=query_analysis_module_lora_path
+                    lora_name="query_analysis", lora_int_id=0, lora_path=query_analysis_module_lora_path
                 ),
                 "sampling_params": SamplingParams(temperature=0, max_tokens=2, logprobs=20),
                 "prompt_template": PromptTemplate(
@@ -57,7 +57,7 @@ class LongRefiner:
             "doc_structuring": {
                 "lora_path": doc_structuring_module_lora_path,
                 "lora_request": LoRARequest(
-                    name="doc_structuring", id=1, lora_local_path=doc_structuring_module_lora_path
+                    lora_name="doc_structuring", lora_int_id=1, lora_path=doc_structuring_module_lora_path
                 ),
                 "sampling_params": SamplingParams(temperature=0, max_tokens=10000),
                 "prompt_template": PromptTemplate(
@@ -67,7 +67,7 @@ class LongRefiner:
             "global_selection": {
                 "lora_path": global_selection_module_lora_path,
                 "lora_request": LoRARequest(
-                    name="global_selection", id=2, lora_local_path=global_selection_module_lora_path
+                    lora_name="global_selection", lora_int_id=2, lora_path=global_selection_module_lora_path
                 ),
                 "sampling_params": SamplingParams(temperature=0, max_tokens=10000),
                 "prompt_template": PromptTemplate(
@@ -255,7 +255,7 @@ class LongRefiner:
         lora_request = self.step_to_config["query_analysis"]["lora_request"]
 
         prompt_list = [prompt_template.get_prompt(question=question) for question in question_list]
-        output_list = self.model.generate(prompt_list, sampling_params=sampling_params, lora_requests=lora_request)
+        output_list = self.model.generate(prompt_list, sampling_params=sampling_params, lora_request=lora_request)
 
         query_analysis_result = []
         for output in output_list:
@@ -284,7 +284,7 @@ class LongRefiner:
 
         # get doc content (doc title is not used)
         doc_content_list = [
-            ["\n".join(doc["content"].split("\n")[1:]) for doc in item_doc_list] for item_doc_list in document_list
+            ["\n".join(doc["contents"].split("\n")[1:]) for doc in item_doc_list] for item_doc_list in document_list
         ]
         # truncate doc content if it is too long
         doc_content_list = [
@@ -300,7 +300,7 @@ class LongRefiner:
             ],
             [],
         )
-        output_list = self.model.generate(prompt_list, sampling_params=sampling_params, lora_requests=lora_request)
+        output_list = self.model.generate(prompt_list, sampling_params=sampling_params, lora_request=lora_request)
 
         # parse output to structured content
         structured_doc_list = []
@@ -357,7 +357,7 @@ class LongRefiner:
                 prompt = prompt_template.get_prompt(question=question, abstract=abstract, outline=outline)
                 prompt_list.append(prompt)
 
-        output_list = self.model.generate(prompt_list, sampling_params=sampling_params, lora_requests=lora_request)
+        output_list = self.model.generate(prompt_list, sampling_params=sampling_params, lora_request=lora_request)
         global_selection_result = []
         idx = 0
         for question, item_doc_list in zip(question_list, structured_doc_list):
@@ -563,19 +563,19 @@ class LongRefiner:
                 if "abstract" in doc:
                     if doc["abstract"] is None or doc["abstract"] == "" or doc["abstract"] == []:
                         pass
-                else:
-                    for chunk in doc["abstract"]:
-                        all_nodes.append(
-                            {
-                                "idx": idx,
-                                "question": question,
-                                "doc_idx": doc_idx,
-                                "type": "paragraph",
+                    else:
+                        for chunk in doc["abstract"]:
+                            all_nodes.append(
+                                {
+                                    "idx": idx,
+                                    "question": question,
+                                    "doc_idx": doc_idx,
+                                    "type": "paragraph",
                                 "parent": "abstract",
                                 "parent_type": "abstract",
                                 "content": chunk,
-                            }
-                        )
+                                }
+                            )
 
                 sections = doc["sections"]
                 for section_title, section_dict in list(sections.items()):
@@ -638,6 +638,8 @@ class LongRefiner:
             List[str], each string is a refiner output of the document in document_list
         """
         # collect hierarchical nodes
+        # print(doc_structuring_result[0][0])
+        # assert False
         all_nodes = self._collect_hierarchical_nodes(question_list, doc_structuring_result)
 
         # calculate local score
@@ -704,7 +706,6 @@ class LongRefiner:
                                 if subsection_content == "":
                                     del section_dict["subsections"][subsection]
                                 else:
-                                    # 添加subsection
                                     parent = f"{question}_{doc_idx}_{subsection}"
                                     sub_score_list = [node["score"] for node in parent2node[parent]]
                                     sub_score = sum(sub_score_list) / len(sub_score_list)
@@ -749,7 +750,7 @@ class LongRefiner:
                     node["score"] = (node["score"] - min_score) / (max_score - min_score)
 
         # combine global score
-        global_selection_result = self.run_global_search(question_list, doc_structuring_result)
+        global_selection_result = self.run_global_selection(question_list, doc_structuring_result)
         for idx, node_list in idx2node.items():
             for node in node_list:
                 question = question_list[idx]
@@ -766,11 +767,11 @@ class LongRefiner:
                     # calculate the number of leaf nodes
                     parent_type = node["parent_type"]
                     if parent_type == "section":
-                        parent_dict = doc_structuring_result[idx]["sections"][node["parent"]]
+                        parent_dict = doc_structuring_result[idx][node['doc_idx']]['sections'][node["parent"]]
                         leaf_num = len(parent_dict.get("subsections", {}))
                     elif parent_type == "subsection":
                         leaf_num = len(
-                            doc_structuring_result[idx]["sections"][node["grandparent"]]["subsections"][node["parent"]]
+                            doc_structuring_result[idx][node['doc_idx']]['sections'][node["grandparent"]]["subsections"][node["parent"]]
                         )
                     else:
                         continue
@@ -780,6 +781,11 @@ class LongRefiner:
         refined_node_list = self.select_by_budget(
             question_list, doc_structuring_result, all_nodes, idx2node, budget, ratio
         )
+        for item_node_list in refined_node_list:
+            for node in item_node_list:
+                print(node)
+                print("-----")
+                
         final_contents_list = [[node["contents"] for node in item_node_list] for item_node_list in refined_node_list]
         return final_contents_list
 
@@ -808,7 +814,7 @@ class LongRefiner:
             idx2budget = {idx: budget for idx in idx2node}
 
         # final selection
-        all_docs = []
+        result_nodes = []
         for idx, node_list in tqdm(idx2node.items()):
             # use a large budget for pre selection
             budget = idx2budget[idx] * 2
@@ -921,5 +927,5 @@ class LongRefiner:
                         final_node_list.append(node)
                         budget = budget - node["length"]
 
-            all_nodes.append(final_node_list[:-1])
-        return all_nodes
+            result_nodes.append(final_node_list[:-1])
+        return result_nodes

@@ -79,7 +79,7 @@ class PromptTemplate:
                 ) + self.tokenizer.decode(tokenized_prompt[-half:], skip_special_tokens=True)
             return prompt
 
-    def get_string(
+    def get_prompt(
         self, question=None, retrieval_result=None, formatted_reference=None, previous_gen=None, messages=None, **params
     ):
         if messages is not None:
